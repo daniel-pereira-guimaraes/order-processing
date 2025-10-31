@@ -4,6 +4,7 @@ import com.danielpgbrasil.orderprocessing.domain.shared.Validation;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class OrderDetails {
 
@@ -33,6 +34,24 @@ public class OrderDetails {
 
     public List<OrderItem> items() {
         return items;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(customerName, customerAddress, items);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        return equalsCasted((OrderDetails) other);
+    }
+
+    private boolean equalsCasted(OrderDetails other) {
+        return Objects.equals(customerName, other.customerName)
+                && Objects.equals(customerAddress, other.customerAddress)
+                && Objects.equals(items, other.items);
     }
 
     public static Builder builder() {
