@@ -3,8 +3,10 @@ package com.danielpgbrasil.orderprocessing.domain.order;
 import com.danielpgbrasil.orderprocessing.domain.shared.Validation;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class OrderItem {
+
     private static final int MIN_QUANTITY = 1;
     private static final int MAX_QUANTITY = 999;
     private static final BigDecimal MIN_PRICE = BigDecimal.ZERO;
@@ -50,6 +52,24 @@ public class OrderItem {
 
     public BigDecimal price() {
         return price;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(productId, quantity, price);
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        return equalsCasted((OrderItem) other);
+    }
+
+    private boolean equalsCasted(OrderItem other) {
+        return Objects.equals(productId, other.productId)
+                && Objects.equals(quantity, other.quantity)
+                && Objects.equals(price, other.price);
     }
 
     public static Builder builder() {
