@@ -1,7 +1,7 @@
 package com.danielpgbrasil.orderprocessing.domain.order;
 
 public enum OrderStatus {
-    RECEIVED,
+    CREATED,
     PICKING,
     IN_TRANSIT,
     DELIVERED
