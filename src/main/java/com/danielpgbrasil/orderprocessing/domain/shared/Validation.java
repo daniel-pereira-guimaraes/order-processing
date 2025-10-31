@@ -1,5 +1,7 @@
 package com.danielpgbrasil.orderprocessing.domain.shared;
 
+import java.util.Collection;
+
 public class Validation {
 
     private Validation() {
@@ -18,6 +20,14 @@ public class Validation {
             throw new IllegalArgumentException(message);
         }
         return trimmed;
+    }
+
+    public static <T extends Collection<?>> T requireNonEmpty(T value, String message) {
+        var nonNull = required(value, message);
+        if (nonNull.isEmpty()) {
+            throw new IllegalArgumentException(message);
+        }
+        return nonNull;
     }
 
 }
