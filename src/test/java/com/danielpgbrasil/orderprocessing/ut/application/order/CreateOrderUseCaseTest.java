@@ -41,7 +41,6 @@ class CreateOrderUseCaseTest {
 
         assertThat(order.details(), is(orderDetails));
         assertThat(order.status(), is(OrderStatus.CREATED));
-
         verify(repository).save(order);
         verify(listener, never()).statusChanged(any());
     }
