@@ -28,8 +28,8 @@ class StartOrderPickingUseCaseTest {
         repository = mock(OrderRepository.class);
         useCase = new StartOrderPickingUseCase(transaction, repository);
 
-        when(order.status()).thenReturn(OrderStatus.CREATED);
         when(repository.getOrThrow(ORDER_ID)).thenReturn(order);
+        when(order.status()).thenReturn(OrderStatus.CREATED);
         assertThatInTransaction(transaction).when(repository).save(any());
     }
 
@@ -37,9 +37,9 @@ class StartOrderPickingUseCaseTest {
     void startsPickingWhenOrderIsCreated() {
         useCase.startPicking(ORDER_ID);
 
+        verify(repository).getOrThrow(ORDER_ID);
         verify(order).status();
         verify(order).startPicking();
-        verify(repository).getOrThrow(ORDER_ID);
         verify(repository).save(order);
         verifyNoMoreInteractions(order, repository);
     }
@@ -51,8 +51,8 @@ class StartOrderPickingUseCaseTest {
 
         useCase.startPicking(ORDER_ID);
 
-        verify(order).status();
         verify(repository).getOrThrow(ORDER_ID);
+        verify(order).status();
         verifyNoMoreInteractions(order, repository);
     }
 
@@ -62,8 +62,8 @@ class StartOrderPickingUseCaseTest {
 
         assertThrows(RuntimeException.class, () -> useCase.startPicking(ORDER_ID));
 
-        verify(order, never()).startPicking();
-        verify(repository, never()).save(any());
+        verify(repository).getOrThrow(ORDER_ID);
+        verifyNoMoreInteractions(repository, order);
     }
 
     @Test
@@ -72,7 +72,6 @@ class StartOrderPickingUseCaseTest {
 
         assertThrows(RuntimeException.class, () -> useCase.startPicking(ORDER_ID));
 
-        verify(repository, never()).save(any());
-        verify(order, never()).startPicking();
+        verifyNoInteractions(repository, order);
     }
 }
