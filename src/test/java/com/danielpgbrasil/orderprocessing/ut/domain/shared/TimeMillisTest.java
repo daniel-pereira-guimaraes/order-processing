@@ -65,7 +65,7 @@ class TimeMillisTest {
     @Test
     void nowReturnsIncreasingValues() throws InterruptedException {
         var t1 = TimeMillis.now();
-        Thread.sleep(1);
+        Thread.sleep(1); //NOSONAR
         var t2 = TimeMillis.now();
 
         assertThat(t2.value(), is(greaterThan(t1.value())));
