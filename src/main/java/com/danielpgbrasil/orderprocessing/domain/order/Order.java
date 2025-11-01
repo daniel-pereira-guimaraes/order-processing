@@ -9,11 +9,13 @@ public class Order {
     private OrderId id;
     private final OrderDetails details;
     private OrderStatus status;
+    private final OrderListener listener;
 
     private Order(Builder builder) {
-        this.id = builder.id;
-        this.details = Validation.required(builder.details, "Os detalhes do pedido são requeridos.");
-        this.status = Validation.required(builder.status, "O status do pedido é requerido.");
+        id = builder.id;
+        details = Validation.required(builder.details, "Os detalhes do pedido são requeridos.");
+        status = Validation.required(builder.status, "O status do pedido é requerido.");
+        listener = Validation.required(builder.listener, "O listener é requerido.");
     }
 
     public OrderId id() {
@@ -33,22 +35,22 @@ public class Order {
             throw new IllegalStateException("A criação do pedido já foi finalizada.");
         }
         this.id = Validation.required(id, "O id é requerido.");
-        this.status = OrderStatus.CREATED;
+        updateStatus(OrderStatus.CREATED);
     }
 
     public void startPicking() {
         ensureCurrentStatus(OrderStatus.CREATED);
-        this.status = OrderStatus.PICKING;
+        updateStatus(OrderStatus.PICKING);
     }
 
     public void startTransit() {
         ensureCurrentStatus(OrderStatus.PICKING);
-        this.status = OrderStatus.IN_TRANSIT;
+        updateStatus(OrderStatus.IN_TRANSIT);
     }
 
     public void markDelivered() {
         ensureCurrentStatus(OrderStatus.IN_TRANSIT);
-        this.status = OrderStatus.DELIVERED;
+        updateStatus(OrderStatus.DELIVERED);
     }
 
     private void ensureCurrentStatus(OrderStatus expected) {
@@ -57,6 +59,11 @@ public class Order {
                     "Status inválido: esperado %s, mas está %s.".formatted(expected, this.status)
             );
         }
+    }
+
+    private void updateStatus(OrderStatus newStatus) {
+        this.status = newStatus;
+        this.listener.statusChanged(this);
     }
 
     @Override
@@ -86,6 +93,7 @@ public class Order {
         private OrderId id;
         private OrderDetails details;
         private OrderStatus status;
+        private OrderListener listener;
 
         private Builder() {
         }
@@ -102,6 +110,11 @@ public class Order {
 
         public Builder withStatus(OrderStatus status) {
             this.status = status;
+            return this;
+        }
+
+        public Builder withListener(OrderListener listener) {
+            this.listener = listener;
             return this;
         }
 

@@ -2,13 +2,12 @@ package com.danielpgbrasil.orderprocessing.ut.domain.order;
 
 import com.danielpgbrasil.orderprocessing.domain.order.Order;
 import com.danielpgbrasil.orderprocessing.domain.order.OrderId;
+import com.danielpgbrasil.orderprocessing.domain.order.OrderListener;
 import com.danielpgbrasil.orderprocessing.domain.order.OrderStatus;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.*;
 
 import java.util.stream.Stream;
 
@@ -16,8 +15,17 @@ import static com.danielpgbrasil.orderprocessing.fixture.OrderFixture.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 class OrderTest {
+
+    private OrderListener listener;
+
+    @BeforeEach
+    void beforeEach() {
+        listener = mock(OrderListener.class);
+    }
 
     @Test
     void builderCreatesOrderWhenValid() {
@@ -47,13 +55,27 @@ class OrderTest {
     }
 
     @Test
-    void finalizeCreationSetsIdAndStatus() {
-        var order = builder().withId(null).withStatus(OrderStatus.PICKING).build();
+    void builderThrowsExceptionWhenListenerNull() {
+        var builder = builder().withListener(null);
+
+        var exception = assertThrows(IllegalArgumentException.class, builder::build);
+
+        assertThat(exception.getMessage(), is("O listener é requerido."));
+    }
+
+    @ParameterizedTest
+    @EnumSource(OrderStatus.class)
+    void finalizeCreationSetsIdAndStatusAndNotifiesListener(OrderStatus initialStatus) {
+        var order = builder().withId(null)
+                .withStatus(initialStatus)
+                .withListener(listener)
+                .build();
 
         order.finalizeCreation(ORDER_ID);
 
         assertThat(order.id(), is(ORDER_ID));
         assertThat(order.status(), is(OrderStatus.CREATED));
+        verify(listener).statusChanged(order);
     }
 
     @Test
@@ -68,12 +90,16 @@ class OrderTest {
     }
 
     @Test
-    void startPickingChangesStatus() {
-        var order = builder().build();
+    void startPickingChangesStatusAndNotifiesListener() {
+        var order = builder()
+                .withStatus(OrderStatus.CREATED)
+                .withListener(listener)
+                .build();
 
         order.startPicking();
 
         assertThat(order.status(), is(OrderStatus.PICKING));
+        verify(listener).statusChanged(order);
     }
 
     @Test
@@ -86,12 +112,16 @@ class OrderTest {
     }
 
     @Test
-    void startTransitChangesStatus() {
-        var order = builder().withStatus(OrderStatus.PICKING).build();
+    void startTransitChangesStatusAndNotifiesListener() {
+        var order = builder()
+                .withStatus(OrderStatus.PICKING)
+                .withListener(listener)
+                .build();
 
         order.startTransit();
 
         assertThat(order.status(), is(OrderStatus.IN_TRANSIT));
+        verify(listener).statusChanged(order);
     }
 
     @Test
@@ -104,12 +134,16 @@ class OrderTest {
     }
 
     @Test
-    void markDeliveredChangesStatus() {
-        var order = builder().withStatus(OrderStatus.IN_TRANSIT).build();
+    void markDeliveredChangesStatusAndNotifiesListener() {
+        var order = builder()
+                .withStatus(OrderStatus.IN_TRANSIT)
+                .withListener(listener)
+                .build();
 
         order.markDelivered();
 
         assertThat(order.status(), is(OrderStatus.DELIVERED));
+        verify(listener).statusChanged(order);
     }
 
     @Test
