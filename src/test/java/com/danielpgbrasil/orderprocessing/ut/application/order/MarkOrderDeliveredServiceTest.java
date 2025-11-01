@@ -1,6 +1,6 @@
 package com.danielpgbrasil.orderprocessing.ut.application.order;
 
-import com.danielpgbrasil.orderprocessing.application.order.StartOrderPickingUseCase;
+import com.danielpgbrasil.orderprocessing.application.order.MarkOrderDeliveredService;
 import com.danielpgbrasil.orderprocessing.application.shared.AppTransaction;
 import com.danielpgbrasil.orderprocessing.domain.order.*;
 import com.danielpgbrasil.orderprocessing.fixture.AppTransactionFixture;
@@ -14,42 +14,42 @@ import static com.danielpgbrasil.orderprocessing.fixture.OrderFixture.ORDER_ID;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class StartOrderPickingUseCaseTest {
+class MarkOrderDeliveredServiceTest {
 
     private Order order;
     private AppTransaction transaction;
     private OrderRepository repository;
-    private StartOrderPickingUseCase useCase;
+    private MarkOrderDeliveredService service;
 
     @BeforeEach
     void beforeEach() {
         order = mock(Order.class);
         transaction = AppTransactionFixture.mockedTransaction();
         repository = mock(OrderRepository.class);
-        useCase = new StartOrderPickingUseCase(transaction, repository);
+        service = new MarkOrderDeliveredService(transaction, repository);
 
         when(repository.getOrThrow(ORDER_ID)).thenReturn(order);
-        when(order.status()).thenReturn(OrderStatus.CREATED);
+        when(order.status()).thenReturn(OrderStatus.IN_TRANSIT);
         assertThatInTransaction(transaction).when(repository).save(any());
     }
 
     @Test
-    void startsPickingWhenOrderIsCreated() {
-        useCase.startPicking(ORDER_ID);
+    void marksDeliveredWhenOrderIsInTransit() {
+        service.markDelivered(ORDER_ID);
 
         verify(repository).getOrThrow(ORDER_ID);
         verify(order).status();
-        verify(order).startPicking();
+        verify(order).markDelivered();
         verify(repository).save(order);
         verifyNoMoreInteractions(order, repository);
     }
 
     @ParameterizedTest
-    @EnumSource(value = OrderStatus.class, names = "CREATED", mode = EnumSource.Mode.EXCLUDE)
-    void ignoresWhenOrderIsNotCreated(OrderStatus status) {
+    @EnumSource(value = OrderStatus.class, names = "IN_TRANSIT", mode = EnumSource.Mode.EXCLUDE)
+    void ignoresWhenOrderIsNotInTransit(OrderStatus status) {
         when(order.status()).thenReturn(status);
 
-        useCase.startPicking(ORDER_ID);
+        service.markDelivered(ORDER_ID);
 
         verify(repository).getOrThrow(ORDER_ID);
         verify(order).status();
@@ -60,7 +60,7 @@ class StartOrderPickingUseCaseTest {
     void propagatesExceptionWhenRepositoryFails() {
         when(repository.getOrThrow(ORDER_ID)).thenThrow(RuntimeException.class);
 
-        assertThrows(RuntimeException.class, () -> useCase.startPicking(ORDER_ID));
+        assertThrows(RuntimeException.class, () -> service.markDelivered(ORDER_ID));
 
         verify(repository).getOrThrow(ORDER_ID);
         verifyNoMoreInteractions(repository, order);
@@ -70,7 +70,7 @@ class StartOrderPickingUseCaseTest {
     void propagatesExceptionWhenTransactionFails() {
         doThrow(RuntimeException.class).when(transaction).execute(any());
 
-        assertThrows(RuntimeException.class, () -> useCase.startPicking(ORDER_ID));
+        assertThrows(RuntimeException.class, () -> service.markDelivered(ORDER_ID));
 
         verifyNoInteractions(repository, order);
     }

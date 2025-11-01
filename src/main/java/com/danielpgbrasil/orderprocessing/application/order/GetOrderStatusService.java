@@ -2,11 +2,11 @@ package com.danielpgbrasil.orderprocessing.application.order;
 
 import com.danielpgbrasil.orderprocessing.domain.order.*;
 
-public class GetOrderStatusUseCase {
+public class GetOrderStatusService {
 
     private final OrderRepository repository;
 
-    public GetOrderStatusUseCase(OrderRepository repository) {
+    public GetOrderStatusService(OrderRepository repository) {
         this.repository = repository;
     }
 

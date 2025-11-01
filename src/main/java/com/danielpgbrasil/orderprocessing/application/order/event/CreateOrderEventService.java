@@ -6,13 +6,13 @@ import com.danielpgbrasil.orderprocessing.domain.order.event.*;
 
 import com.danielpgbrasil.orderprocessing.domain.shared.AppClock;
 
-public class CreateOrderEventUseCase {
+public class CreateOrderEventService {
 
     private final AppTransaction transaction;
     private final OrderEventRepository repository;
     private final AppClock clock;
 
-    public CreateOrderEventUseCase(AppTransaction transaction,
+    public CreateOrderEventService(AppTransaction transaction,
                                    OrderEventRepository repository,
                                    AppClock clock) {
         this.transaction = transaction;

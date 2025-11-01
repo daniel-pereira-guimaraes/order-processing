@@ -5,29 +5,29 @@ import com.danielpgbrasil.orderprocessing.domain.order.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MarkOrderDeliveredUseCase {
+public class StartOrderTransitService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarkOrderDeliveredUseCase.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StartOrderTransitService.class);
 
     private final AppTransaction transaction;
     private final OrderRepository repository;
 
-    public MarkOrderDeliveredUseCase(AppTransaction transaction,
-                                     OrderRepository repository) {
+    public StartOrderTransitService(AppTransaction transaction,
+                                    OrderRepository repository) {
         this.transaction = transaction;
         this.repository = repository;
     }
 
-    public void markDelivered(OrderId orderId) {
+    public void startTransit(OrderId orderId) {
         transaction.execute(() -> {
             var order = repository.getOrThrow(orderId);
-            if (order.status() != OrderStatus.IN_TRANSIT) {
-                LOGGER.info("Ignorando pedido {} com status diferente de IN_TRANSIT.", orderId.value());
+            if (order.status() != OrderStatus.PICKING) {
+                LOGGER.info("Ignorando pedido {} com status diferente de PICKING.", orderId.value());
                 return;
             }
-            order.markDelivered();
+            order.startTransit();
             repository.save(order);
-            LOGGER.info("Pedido {} entregue.", orderId.value());
+            LOGGER.info("Pedido {} em transporte.", orderId.value());
         });
     }
 }

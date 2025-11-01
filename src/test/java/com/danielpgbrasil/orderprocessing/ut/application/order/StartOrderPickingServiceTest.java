@@ -1,6 +1,6 @@
 package com.danielpgbrasil.orderprocessing.ut.application.order;
 
-import com.danielpgbrasil.orderprocessing.application.order.StartOrderTransitUseCase;
+import com.danielpgbrasil.orderprocessing.application.order.StartOrderPickingService;
 import com.danielpgbrasil.orderprocessing.application.shared.AppTransaction;
 import com.danielpgbrasil.orderprocessing.domain.order.*;
 import com.danielpgbrasil.orderprocessing.fixture.AppTransactionFixture;
@@ -14,42 +14,42 @@ import static com.danielpgbrasil.orderprocessing.fixture.OrderFixture.ORDER_ID;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-class StartOrderTransitUseCaseTest {
+class StartOrderPickingServiceTest {
 
     private Order order;
     private AppTransaction transaction;
     private OrderRepository repository;
-    private StartOrderTransitUseCase useCase;
+    private StartOrderPickingService service;
 
     @BeforeEach
     void beforeEach() {
         order = mock(Order.class);
         transaction = AppTransactionFixture.mockedTransaction();
         repository = mock(OrderRepository.class);
-        useCase = new StartOrderTransitUseCase(transaction, repository);
+        service = new StartOrderPickingService(transaction, repository);
 
         when(repository.getOrThrow(ORDER_ID)).thenReturn(order);
-        when(order.status()).thenReturn(OrderStatus.PICKING);
+        when(order.status()).thenReturn(OrderStatus.CREATED);
         assertThatInTransaction(transaction).when(repository).save(any());
     }
 
     @Test
-    void startsTransitWhenOrderIsPicking() {
-        useCase.startTransit(ORDER_ID);
+    void startsPickingWhenOrderIsCreated() {
+        service.startPicking(ORDER_ID);
 
         verify(repository).getOrThrow(ORDER_ID);
         verify(order).status();
-        verify(order).startTransit();
+        verify(order).startPicking();
         verify(repository).save(order);
         verifyNoMoreInteractions(order, repository);
     }
 
     @ParameterizedTest
-    @EnumSource(value = OrderStatus.class, names = "PICKING", mode = EnumSource.Mode.EXCLUDE)
-    void ignoresWhenOrderIsNotPicking(OrderStatus status) {
+    @EnumSource(value = OrderStatus.class, names = "CREATED", mode = EnumSource.Mode.EXCLUDE)
+    void ignoresWhenOrderIsNotCreated(OrderStatus status) {
         when(order.status()).thenReturn(status);
 
-        useCase.startTransit(ORDER_ID);
+        service.startPicking(ORDER_ID);
 
         verify(repository).getOrThrow(ORDER_ID);
         verify(order).status();
@@ -60,7 +60,7 @@ class StartOrderTransitUseCaseTest {
     void propagatesExceptionWhenRepositoryFails() {
         when(repository.getOrThrow(ORDER_ID)).thenThrow(RuntimeException.class);
 
-        assertThrows(RuntimeException.class, () -> useCase.startTransit(ORDER_ID));
+        assertThrows(RuntimeException.class, () -> service.startPicking(ORDER_ID));
 
         verify(repository).getOrThrow(ORDER_ID);
         verifyNoMoreInteractions(repository, order);
@@ -70,7 +70,7 @@ class StartOrderTransitUseCaseTest {
     void propagatesExceptionWhenTransactionFails() {
         doThrow(RuntimeException.class).when(transaction).execute(any());
 
-        assertThrows(RuntimeException.class, () -> useCase.startTransit(ORDER_ID));
+        assertThrows(RuntimeException.class, () -> service.startPicking(ORDER_ID));
 
         verifyNoInteractions(repository, order);
     }

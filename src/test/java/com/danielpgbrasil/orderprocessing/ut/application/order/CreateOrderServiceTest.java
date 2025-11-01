@@ -13,15 +13,15 @@ import com.danielpgbrasil.orderprocessing.fixture.OrderDetailsFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.danielpgbrasil.orderprocessing.application.order.CreateOrderUseCase;
+import com.danielpgbrasil.orderprocessing.application.order.CreateOrderService;
 import com.danielpgbrasil.orderprocessing.application.shared.AppTransaction;
 
-class CreateOrderUseCaseTest {
+class CreateOrderServiceTest {
 
     private AppTransaction transaction;
     private OrderRepository repository;
     private OrderListener listener;
-    private CreateOrderUseCase useCase;
+    private CreateOrderService service;
     private OrderDetails orderDetails;
 
     @BeforeEach
@@ -29,7 +29,7 @@ class CreateOrderUseCaseTest {
         transaction = AppTransactionFixture.mockedTransaction();
         repository = mock(OrderRepository.class);
         listener = mock(OrderListener.class);
-        useCase = new CreateOrderUseCase(transaction, repository, listener);
+        service = new CreateOrderService(transaction, repository, listener);
         orderDetails = OrderDetailsFixture.builder().build();
 
         assertThatInTransaction(transaction).when(repository).save(any());
@@ -37,7 +37,7 @@ class CreateOrderUseCaseTest {
 
     @Test
     void createsOrderSuccessfully() {
-        var order = useCase.createOrder(orderDetails);
+        var order = service.createOrder(orderDetails);
 
         assertThat(order.details(), is(orderDetails));
         assertThat(order.status(), is(OrderStatus.CREATED));
@@ -49,7 +49,7 @@ class CreateOrderUseCaseTest {
     void propagatesExceptionWhenRepositoryFails() {
         doThrow(RuntimeException.class).when(repository).save(any(Order.class));
 
-        assertThrows(RuntimeException.class, () -> useCase.createOrder(orderDetails));
+        assertThrows(RuntimeException.class, () -> service.createOrder(orderDetails));
 
         verify(repository).save(any(Order.class));
     }
@@ -58,7 +58,7 @@ class CreateOrderUseCaseTest {
     void propagatesExceptionWhenTransactionFails() {
         doThrow(RuntimeException.class).when(transaction).execute(any());
 
-        assertThrows(RuntimeException.class, () -> useCase.createOrder(orderDetails));
+        assertThrows(RuntimeException.class, () -> service.createOrder(orderDetails));
 
         verify(repository, never()).save(any(Order.class));
     }

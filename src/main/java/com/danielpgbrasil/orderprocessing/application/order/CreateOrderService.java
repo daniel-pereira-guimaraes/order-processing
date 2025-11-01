@@ -3,13 +3,13 @@ package com.danielpgbrasil.orderprocessing.application.order;
 import com.danielpgbrasil.orderprocessing.application.shared.AppTransaction;
 import com.danielpgbrasil.orderprocessing.domain.order.*;
 
-public class CreateOrderUseCase {
+public class CreateOrderService {
 
     private final AppTransaction transaction;
     private final OrderRepository repository;
     private final OrderListener listener;
 
-    public CreateOrderUseCase(AppTransaction transaction,
+    public CreateOrderService(AppTransaction transaction,
                               OrderRepository repository,
                               OrderListener listener) {
         this.transaction = transaction;

@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-import com.danielpgbrasil.orderprocessing.application.order.event.CreateOrderEventUseCase;
+import com.danielpgbrasil.orderprocessing.application.order.event.CreateOrderEventService;
 import com.danielpgbrasil.orderprocessing.application.shared.AppTransaction;
 import com.danielpgbrasil.orderprocessing.domain.order.Order;
 import com.danielpgbrasil.orderprocessing.domain.order.event.OrderEvent;
@@ -21,12 +21,12 @@ import com.danielpgbrasil.orderprocessing.fixture.TimeMillisFixture;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class CreateOrderEventUseCaseTest {
+class CreateOrderEventServiceTest {
 
     private AppTransaction transaction;
     private OrderEventRepository repository;
     private AppClock clock;
-    private CreateOrderEventUseCase useCase;
+    private CreateOrderEventService service;
     private Order order;
 
     @BeforeEach
@@ -34,7 +34,7 @@ class CreateOrderEventUseCaseTest {
         transaction = mockedTransaction();
         repository = mock(OrderEventRepository.class);
         clock = mock(AppClock.class);
-        useCase = new CreateOrderEventUseCase(transaction, repository, clock);
+        service = new CreateOrderEventService(transaction, repository, clock);
         order = OrderFixture.builder().build();
 
         when(clock.now()).thenReturn(TimeMillisFixture.NOW);
@@ -43,7 +43,7 @@ class CreateOrderEventUseCaseTest {
 
     @Test
     void createsEventSuccessfully() {
-        var event = useCase.createEvent(order, OrderEventType.CREATED);
+        var event = service.createEvent(order, OrderEventType.CREATED);
 
         assertThat(event.orderId(), is(order.id()));
         assertThat(event.type(), is(OrderEventType.CREATED));
@@ -57,7 +57,7 @@ class CreateOrderEventUseCaseTest {
     void propagatesExceptionWhenRepositoryFails() {
         doThrow(RuntimeException.class).when(repository).save(any(OrderEvent.class));
 
-        assertThrows(RuntimeException.class, () -> useCase.createEvent(order, OrderEventType.CREATED));
+        assertThrows(RuntimeException.class, () -> service.createEvent(order, OrderEventType.CREATED));
 
         verify(repository).save(any(OrderEvent.class));
     }
@@ -66,7 +66,7 @@ class CreateOrderEventUseCaseTest {
     void propagatesExceptionWhenTransactionFails() {
         doThrow(RuntimeException.class).when(transaction).execute(any());
 
-        assertThrows(RuntimeException.class, () -> useCase.createEvent(order, OrderEventType.CREATED));
+        assertThrows(RuntimeException.class, () -> service.createEvent(order, OrderEventType.CREATED));
 
         verify(repository, never()).save(any(OrderEvent.class));
     }
@@ -75,7 +75,7 @@ class CreateOrderEventUseCaseTest {
     void propagatesExceptionWhenClockFails() {
         when(clock.now()).thenThrow(RuntimeException.class);
 
-        assertThrows(RuntimeException.class, () -> useCase.createEvent(order, OrderEventType.CREATED));
+        assertThrows(RuntimeException.class, () -> service.createEvent(order, OrderEventType.CREATED));
 
         verify(repository, never()).save(any(OrderEvent.class));
     }

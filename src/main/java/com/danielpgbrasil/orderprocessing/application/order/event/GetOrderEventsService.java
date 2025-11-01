@@ -12,11 +12,11 @@ import java.util.List;
     uso porque ficaria mais simplesmente evoluir caso surja necessidade
     de algum processamento adicional, como validação de acesso, por exemplo.
  */
-public class GetOrderEventsUseCase {
+public class GetOrderEventsService {
 
     private final OrderEventRepository repository;
 
-    public GetOrderEventsUseCase(OrderEventRepository repository) {
+    public GetOrderEventsService(OrderEventRepository repository) {
         this.repository = repository;
     }
 
