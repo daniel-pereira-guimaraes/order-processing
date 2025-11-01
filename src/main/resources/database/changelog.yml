@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: danielpg
+      comment: "Script inicial - nenhuma alteração"
+      changes: []
