@@ -4,3 +4,28 @@ databaseChangeLog:
       author: danielpg
       comment: "Script inicial - nenhuma alteração"
       changes: []
+
+  - changeSet:
+      id: 2
+      author: danielpg
+      changes:
+        - createTable:
+            tableName: tb_order
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: details
+                  type: JSON
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: ENUM('CREATED','PICKING','IN_TRANSIT','DELIVERED')
+                  constraints:
+                    nullable: false
