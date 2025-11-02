@@ -1,4 +1,4 @@
-package com.danielpgbrasil.orderprocessing.ut.infrastructure.shared;
+package com.danielpgbrasil.orderprocessing.it.infrastructure.shared;
 
 import com.danielpgbrasil.orderprocessing.domain.order.OrderDetails;
 import com.danielpgbrasil.orderprocessing.domain.order.OrderItem;
