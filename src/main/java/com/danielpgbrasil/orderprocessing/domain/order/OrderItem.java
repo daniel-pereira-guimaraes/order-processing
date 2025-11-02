@@ -1,6 +1,8 @@
 package com.danielpgbrasil.orderprocessing.domain.order;
 
 import com.danielpgbrasil.orderprocessing.domain.shared.Validation;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -69,7 +71,12 @@ public class OrderItem {
     private boolean equalsCasted(OrderItem other) {
         return Objects.equals(productId, other.productId)
                 && Objects.equals(quantity, other.quantity)
-                && Objects.equals(price, other.price);
+                && price.compareTo(other.price) == 0;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     public static Builder builder() {
