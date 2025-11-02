@@ -59,6 +59,18 @@ public class JdbcOrderRepository implements OrderRepository {
     }
 
     @Override
+    public boolean exists(OrderId id) {
+        var sql = "SELECT 1 FROM tb_order WHERE id = :id LIMIT 1";
+        var params = Map.of("id", id.value());
+        try {
+            jdbc.queryForObject(sql, params, Integer.class);
+            return true;
+        } catch (EmptyResultDataAccessException e) {
+            return false;
+        }
+    }
+
+    @Override
     public void save(Order order) {
         if (order.id() == null) {
             insert(order);

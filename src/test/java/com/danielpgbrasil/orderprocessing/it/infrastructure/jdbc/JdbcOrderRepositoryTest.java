@@ -55,6 +55,24 @@ class JdbcOrderRepositoryTest extends IntegrationTestBase {
     }
 
     @Test
+    void existsReturnsTrueForExistingOrder() {
+        var id = OrderId.of(1L);
+
+        boolean result = repository.exists(id);
+
+        assertThat(result, is(true));
+    }
+
+    @Test
+    void existsReturnsFalseForNonExistentOrder() {
+        var id = OrderId.of(999L);
+
+        boolean result = repository.exists(id);
+
+        assertThat(result, is(false));
+    }
+
+    @Test
     void mustUpdateExistingOrder() {
         var originalOrder = createOriginalOrder();
         repository.save(originalOrder);
