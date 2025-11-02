@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @Import(MocksConfig.class)
-class IntegrationTestBase {
+public class IntegrationTestBase {
 
     @Autowired
     protected AppClock clock;
