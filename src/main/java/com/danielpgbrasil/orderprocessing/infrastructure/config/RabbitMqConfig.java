@@ -1,37 +1,26 @@
 package com.danielpgbrasil.orderprocessing.infrastructure.config;
 
 import org.springframework.amqp.core.*;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMqConfig {
 
-    @Value("${app.rabbitmq.order.queue}")
-    private String orderQueueName;
-
-    @Value("${app.rabbitmq.order.exchange}")
-    private String orderExchangeName;
-
-    @Value("${app.rabbitmq.order.routing-key}")
-    private String orderRoutingKey;
+    public static final String ORDER_EVENTS_ROUTING_KEY = "order-events";
 
     @Bean
     Queue orderQueue() {
-        return QueueBuilder.durable(orderQueueName).build();
+        return QueueBuilder.durable("order-events-queue").build();
     }
 
     @Bean
     DirectExchange orderExchange() {
-        return new DirectExchange(orderExchangeName);
+        return new DirectExchange("order-events-exchange");
     }
 
     @Bean
     Binding orderBinding(Queue orderQueue, DirectExchange orderExchange) {
-        return BindingBuilder.bind(orderQueue)
-                .to(orderExchange)
-                .with(orderRoutingKey);
+        return BindingBuilder.bind(orderQueue).to(orderExchange).with(ORDER_EVENTS_ROUTING_KEY);
     }
-
 }
