@@ -1,6 +1,8 @@
 package com.danielpgbrasil.orderprocessing.domain.order;
 
 import com.danielpgbrasil.orderprocessing.domain.shared.Validation;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 
@@ -9,7 +11,7 @@ public class Order {
     private OrderId id;
     private final OrderDetails details;
     private OrderStatus status;
-    private final OrderListener listener;
+    private final transient OrderListener listener;
 
     private Order(Builder builder) {
         id = builder.id;
@@ -82,6 +84,11 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(id, details, status);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     public static Builder builder() {
