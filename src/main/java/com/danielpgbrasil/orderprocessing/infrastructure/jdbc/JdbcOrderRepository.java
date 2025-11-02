@@ -25,10 +25,11 @@ public class JdbcOrderRepository implements OrderRepository {
             """;
 
     private static final String SQL_SELECT_BASE = "SELECT id, details, status FROM tb_order";
-    private static final String SQL_SELECT_BY_ID = SQL_SELECT_BASE + " WHERE id = :id";
-    public static final String DETAILS = "details";
-    public static final String STATUS = "status";
-    public static final String ID = "id";
+    private static final String SQL_SELECT_BY_ID = SQL_SELECT_BASE + " WHERE id = :id FOR UPDATE";
+
+    private static final String ID = "id";
+    private static final String DETAILS = "details";
+    private static final String STATUS = "status";
 
     private final NamedParameterJdbcTemplate jdbc;
     private final Serializer serializer;
@@ -84,9 +85,7 @@ public class JdbcOrderRepository implements OrderRepository {
 
     private Order mapOrder(java.sql.ResultSet rs) throws SQLException {
         var detailsJson = rs.getString(DETAILS);
-        System.out.println("detailsJson: " + detailsJson);
         var details = serializer.deserialize(detailsJson, OrderDetails.class);
-
         return Order.builder()
                 .withId(OrderId.of(rs.getLong(ID)))
                 .withDetails(details)
