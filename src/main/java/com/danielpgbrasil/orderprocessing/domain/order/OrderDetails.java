@@ -1,6 +1,8 @@
 package com.danielpgbrasil.orderprocessing.domain.order;
 
 import com.danielpgbrasil.orderprocessing.domain.shared.Validation;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Collections;
 import java.util.List;
@@ -52,6 +54,11 @@ public class OrderDetails {
         return Objects.equals(customerName, other.customerName)
                 && Objects.equals(customerAddress, other.customerAddress)
                 && Objects.equals(items, other.items);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     public static Builder builder() {
