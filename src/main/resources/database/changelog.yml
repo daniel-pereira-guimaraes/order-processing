@@ -29,3 +29,50 @@ databaseChangeLog:
                   type: ENUM('CREATED','PICKING','IN_TRANSIT','DELIVERED')
                   constraints:
                     nullable: false
+
+  - changeSet:
+      id: 3
+      author: danielpg
+      changes:
+        - createTable:
+            tableName: tb_order_event
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_order_event_order
+                    references: tb_order(id)
+              - column:
+                  name: type
+                  type: ENUM('CREATED','PICKING_STARTED','TRANSIT_STARTED','DELIVERED')
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: published
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+                  constraints:
+                    nullable: false
+        - createIndex:
+            indexName: idx_order_event_published_id
+            tableName: tb_order_event
+            unique: false
+            columns:
+              - column:
+                  name: published
+              - column:
+                  name: id
