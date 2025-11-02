@@ -24,11 +24,12 @@ class JdbcOrderRepositoryTest extends IntegrationTestBase {
     private JdbcOrderRepository repository;
 
     @Test
-    void getByIdReturnsOrderWhenFound() {
+    void saveAndGetByIdSuccessfully() {
         var order = builder().withId(null).build();
         repository.save(order);
 
         var result = repository.get(order.id()).orElseThrow();
+
         assertThat(result.id(), notNullValue());
         assertThat(result, is(order));
     }
@@ -54,16 +55,6 @@ class JdbcOrderRepositoryTest extends IntegrationTestBase {
     }
 
     @Test
-    void mustAddAndGetById() {
-        var order = builder().withId(null).build();
-        repository.save(order);
-
-        var retrieved = repository.get(order.id()).orElseThrow();
-        assertThat(order.id(), notNullValue());
-        assertThat(order, is(retrieved));
-    }
-
-    @Test
     void mustUpdateExistingOrder() {
         var originalOrder = createOriginalOrder();
         repository.save(originalOrder);
@@ -74,7 +65,6 @@ class JdbcOrderRepositoryTest extends IntegrationTestBase {
         var reloaded = repository.get(originalOrder.id()).orElseThrow();
 
         assertThat(reloaded.id(), is(originalOrder.id()));
-
         assertThat(reloaded.details().customerName(), is("Updated Customer"));
         assertThat(reloaded.details().customerAddress(), is("Updated Address"));
         assertThat(reloaded.details().items().size(), is(1));
