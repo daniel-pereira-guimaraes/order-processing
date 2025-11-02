@@ -6,11 +6,11 @@ import com.danielpgbrasil.orderprocessing.domain.order.event.OrderEventRepositor
 
 import java.util.List;
 
-/* Este caso de uso poderia ser suprimido, pois não há nenhum processamento
+/* Este service poderia ser suprimido, pois não há nenhum processamento
     relevante sendo executado aqui. O controller poderia obter os eventos
-    diretamente do repositório. Mesmo assim optei por criar este caso de
-    uso porque ficaria mais simplesmente evoluir caso surja necessidade
-    de algum processamento adicional, como validação de acesso, por exemplo.
+    diretamente do repositório. Mesmo assim optei por criar este service
+    porque fica mais fácil evoluir caso surja necessidade de algum
+    processamento adicional, como validação de acesso, por exemplo.
  */
 public class GetOrderEventsService {
 
