@@ -15,10 +15,7 @@ import java.lang.annotation.*;
         description = "Requisição inválida",
         content = @Content(
                 mediaType = "application/json",
-                schema = @Schema(
-                        implementation = AppErrorResponse.class,
-                        example = "Mensagem de erro"
-                )
+                schema = @Schema(implementation = AppErrorResponse.class)
         )
 )
 public @interface BadRequestResponse {}
