@@ -109,7 +109,7 @@ public class CreateOrderController {
                     .build();
         }
 
-        @Schema(name = "OrderItemRequest")
+        @Schema(name = "CreateOrderItemRequest")
         public record Item(
                 @Schema(description = "ID do produto", example = "1")
                 Long productId,
@@ -151,7 +151,7 @@ public class CreateOrderController {
         }
     }
 
-    @Schema(name = "OrderItemResponse")
+    @Schema(name = "CreateOrderItemResponse")
     public record Item(
             Long productId,
             Integer quantity,
