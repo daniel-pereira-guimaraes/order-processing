@@ -5,8 +5,12 @@ import com.danielpgbrasil.orderprocessing.domain.order.Order;
 import com.danielpgbrasil.orderprocessing.domain.order.event.*;
 
 import com.danielpgbrasil.orderprocessing.domain.shared.AppClock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateOrderEventService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CreateOrderEventService.class);
 
     private final AppTransaction transaction;
     private final OrderEventRepository repository;
@@ -21,6 +25,7 @@ public class CreateOrderEventService {
     }
 
     public OrderEvent createEvent(Order order, OrderEventType type) {
+        LOGGER.info("Criando evento: orderId={}, eventType={}", order.id().value(), type);
         var event = buildEvent(order, type);
         transaction.execute(() -> repository.save(event));
         return event;

@@ -82,11 +82,10 @@ public class CreateOrderController {
     )
     @BadRequestResponse
     public ResponseEntity<Response> post(@RequestBody Request request) {
-        LOGGER.info("Criando pedido para cliente: {}", request.customerName());
-
+        LOGGER.info("Criando pedido: customerName={}", request.customerName());
         var details = request.toOrderDetails();
         var order = createOrderService.createOrder(details);
-
+        LOGGER.info("Pedido criado: id={}, customerName={}", order.id().value(), order.details().customerName());
         return ResponseEntity.status(HttpStatus.CREATED).body(Response.of(order));
     }
 
