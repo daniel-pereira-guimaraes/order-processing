@@ -1,3 +1,28 @@
 databaseChangeLog:
   - include:
       file: classpath:/database/changelog.yml
+
+  - changeSet:
+      id: test-data
+      author: danielpg
+      changes:
+        - loadData:
+            tableName: tb_order
+            file: classpath:/database/tb_order.csv
+            separator: "|"
+            quotchar: '"'
+        - loadData:
+            tableName: tb_order_event
+            file: classpath:/database/tb_order_event.csv
+            separator: "|"
+            quotchar: '"'
+
+  - changeSet:
+      id: restart_auto_inc
+      author: daniel
+      changes:
+        - sql:
+            dbms: h2
+            sql: |
+              ALTER TABLE tb_order ALTER COLUMN id RESTART WITH (SELECT MAX(id) + 1 FROM tb_order);
+              ALTER TABLE tb_order_event ALTER COLUMN id RESTART WITH (SELECT MAX(id) + 1 FROM tb_order_event);

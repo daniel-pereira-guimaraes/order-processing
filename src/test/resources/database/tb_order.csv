@@ -1,0 +1,5 @@
+id|details|status
+1|{"customerName":"João Silva","customerAddress":"Rua Exemplo, 123, São Paulo/SP","items":[{"productId":1,"quantity":5,"price":10.0}]}|CREATED
+2|{"customerName":"Maria Souza","customerAddress":"Av. Central, 456, Rio de Janeiro/RJ","items":[{"productId":2,"quantity":3,"price":15.5},{"productId":3,"quantity":1,"price":100.0}]}|PICKING
+3|{"customerName":"Carlos Pereira","customerAddress":"Praça Central, 10, Belo Horizonte/MG","items":[{"productId":4,"quantity":2,"price":50.0}]}|IN_TRANSIT
+4|{"customerName":"Ana Costa","customerAddress":"Rua A, 321, Curitiba/PR","items":[{"productId":5,"quantity":1,"price":250.0},{"productId":6,"quantity":2,"price":12.5}]}|DELIVERED
