@@ -1,5 +1,8 @@
 package com.danielpgbrasil.orderprocessing.domain.shared;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Objects;
 import java.util.Optional;
 
@@ -37,5 +40,10 @@ public class TimeMillis  {
     public boolean equals(Object other) {
         return other instanceof TimeMillis otherTimeMillis
                 && Objects.equals(value, otherTimeMillis.value);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

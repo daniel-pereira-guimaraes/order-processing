@@ -3,6 +3,8 @@ package com.danielpgbrasil.orderprocessing.domain.order.event;
 import com.danielpgbrasil.orderprocessing.domain.order.OrderId;
 import com.danielpgbrasil.orderprocessing.domain.shared.TimeMillis;
 import com.danielpgbrasil.orderprocessing.domain.shared.Validation;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.Objects;
 
@@ -74,6 +76,11 @@ public class OrderEvent {
                 && type == other.type
                 && Objects.equals(createdAt, other.createdAt)
                 && Objects.equals(published, other.published);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 
     public static Builder builder() {

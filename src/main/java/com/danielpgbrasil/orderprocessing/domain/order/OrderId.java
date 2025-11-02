@@ -21,9 +21,4 @@ public class OrderId extends SurrogateId {
                 : Optional.of(new OrderId(value));
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
-    }
-
 }
