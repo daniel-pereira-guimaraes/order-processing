@@ -4,6 +4,7 @@ import com.danielpgbrasil.orderprocessing.application.order.MarkOrderDeliveredSe
 import com.danielpgbrasil.orderprocessing.application.order.StartOrderPickingService;
 import com.danielpgbrasil.orderprocessing.application.order.StartOrderTransitService;
 import com.danielpgbrasil.orderprocessing.domain.order.event.OrderEvent;
+import com.danielpgbrasil.orderprocessing.infrastructure.config.RabbitMqConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -27,7 +28,7 @@ public class OrderEventConsumer {
         this.deliveryService = deliveryService;
     }
 
-    @RabbitListener(queues = "order-events-queue")
+    @RabbitListener(queues = RabbitMqConfig.ORDER_QUEUE)
     public void handleOrderEvent(OrderEvent event) {
         try {
             LOGGER.info("Consumindo evento: id={}, orderId={}, type={}",
