@@ -10,10 +10,10 @@ public enum OrderEventType {
 
     public static OrderEventType fromStatus(OrderStatus status) {
         return switch (status) {
-            case OrderStatus.CREATED -> CREATED;
-            case OrderStatus.PICKING -> PICKING_STARTED;
-            case OrderStatus.IN_TRANSIT -> TRANSIT_STARTED;
-            case OrderStatus.DELIVERED -> DELIVERED;
+            case CREATED -> CREATED;
+            case PICKING -> PICKING_STARTED;
+            case IN_TRANSIT -> TRANSIT_STARTED;
+            case DELIVERED -> DELIVERED;
         };
     }
 }
