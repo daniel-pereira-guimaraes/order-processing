@@ -13,11 +13,11 @@ public class OrderEventSerializer extends JsonSerializer<OrderEvent> {
     public void serialize(OrderEvent event,
                           JsonGenerator gen,
                           SerializerProvider serializers) throws IOException {
-
         gen.writeStartObject();
         gen.writeNumberField("id", event.id().value());
         gen.writeNumberField("orderId", event.orderId().value());
         gen.writeStringField("type", event.type().name());
+        gen.writeNumberField("createdAt", event.createdAt().value());
         gen.writeBooleanField("published", event.isPublished());
         gen.writeEndObject();
     }
