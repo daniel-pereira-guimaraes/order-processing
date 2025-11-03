@@ -23,9 +23,10 @@ public class PublishPendingOrderEventsService {
     }
 
     public void publishPendingEvents() {
+        LOGGER.debug("Verificando eventos não publicados");
         var unpublishedEvents = repository.findAllUnpublished();
         if (!unpublishedEvents.isEmpty()) {
-            LOGGER.info("Publicando eventos pendentes: count={}", unpublishedEvents.size());
+            LOGGER.info("Publicando eventos: count={}", unpublishedEvents.size());
             unpublishedEvents.forEach(this::tryPublishEvent);
         }
     }
