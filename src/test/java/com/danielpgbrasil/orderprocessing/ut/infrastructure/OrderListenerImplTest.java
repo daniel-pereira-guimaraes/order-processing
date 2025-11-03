@@ -5,6 +5,7 @@ import com.danielpgbrasil.orderprocessing.domain.order.OrderStatus;
 import com.danielpgbrasil.orderprocessing.domain.order.event.OrderEventType;
 import com.danielpgbrasil.orderprocessing.application.order.event.CreateOrderEventService;
 import com.danielpgbrasil.orderprocessing.infrastructure.OrderListenerImpl;
+import com.danielpgbrasil.orderprocessing.infrastructure.messaging.AsyncPublishPendingOrderEventsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,12 +17,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class OrderListenerImplTest {
 
     private CreateOrderEventService service;
+    private AsyncPublishPendingOrderEventsService asyncPublishPendingOrderEventsService;
     private OrderListenerImpl listener;
 
     @BeforeEach
     void beforeEach() {
         service = mock(CreateOrderEventService.class);
-        listener = new OrderListenerImpl(service);
+        asyncPublishPendingOrderEventsService = mock(AsyncPublishPendingOrderEventsService.class);
+        listener = new OrderListenerImpl(service, asyncPublishPendingOrderEventsService);
     }
 
     @ParameterizedTest
@@ -41,6 +44,7 @@ class OrderListenerImplTest {
         listener.statusChanged(order);
 
         verify(service).createEvent(order, expectedEventType);
+        verify(asyncPublishPendingOrderEventsService).execute();
     }
 
     @Test
