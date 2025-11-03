@@ -11,14 +11,18 @@ import org.springframework.stereotype.Component;
 public class OrderListenerImpl implements OrderListener {
 
     private final CreateOrderEventService createOrderEventService;
+    private final AsyncPublishPendingOrderEventsService asyncPublishPendingOrderEventsService;
 
-    public OrderListenerImpl(@Lazy CreateOrderEventService createOrderEventService) {
+    public OrderListenerImpl(@Lazy CreateOrderEventService createOrderEventService, AsyncPublishPendingOrderEventsService asyncPublishPendingOrderEventsService) {
         this.createOrderEventService = createOrderEventService;
+        this.asyncPublishPendingOrderEventsService = asyncPublishPendingOrderEventsService;
     }
 
     @Override
     public void statusChanged(Order order) {
         var eventType = OrderEventType.fromStatus(order.status());
         createOrderEventService.createEvent(order, eventType);
+        asyncPublishPendingOrderEventsService.execute();
     }
+
 }
