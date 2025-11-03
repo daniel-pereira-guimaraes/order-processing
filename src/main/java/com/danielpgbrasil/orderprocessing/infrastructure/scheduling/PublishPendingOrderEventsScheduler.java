@@ -13,7 +13,7 @@ public class PublishPendingOrderEventsScheduler {
         this.publishService = publishService;
     }
 
-    @Scheduled(fixedDelay = 5000L)
+    @Scheduled(fixedDelay = 10000L)
     public void run() {
         publishService.publishPendingEvents();
     }
