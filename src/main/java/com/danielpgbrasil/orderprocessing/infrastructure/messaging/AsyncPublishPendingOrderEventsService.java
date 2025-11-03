@@ -1,4 +1,4 @@
-package com.danielpgbrasil.orderprocessing.infrastructure;
+package com.danielpgbrasil.orderprocessing.infrastructure.messaging;
 
 import com.danielpgbrasil.orderprocessing.application.order.event.PublishPendingOrderEventsService;
 import org.springframework.context.annotation.Lazy;

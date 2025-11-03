@@ -1,4 +1,4 @@
-package com.danielpgbrasil.orderprocessing.infrastructure.scheduling;
+package com.danielpgbrasil.orderprocessing.infrastructure.messaging;
 
 import com.danielpgbrasil.orderprocessing.application.order.event.PublishPendingOrderEventsService;
 import org.springframework.scheduling.annotation.Scheduled;

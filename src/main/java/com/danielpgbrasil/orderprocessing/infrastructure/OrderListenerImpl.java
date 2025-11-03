@@ -4,6 +4,7 @@ import com.danielpgbrasil.orderprocessing.application.order.event.CreateOrderEve
 import com.danielpgbrasil.orderprocessing.domain.order.Order;
 import com.danielpgbrasil.orderprocessing.domain.order.OrderListener;
 import com.danielpgbrasil.orderprocessing.domain.order.event.OrderEventType;
+import com.danielpgbrasil.orderprocessing.infrastructure.messaging.AsyncPublishPendingOrderEventsService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
