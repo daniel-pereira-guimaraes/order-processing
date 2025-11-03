@@ -23,10 +23,13 @@ public class PublishPendingOrderEventsService {
     }
 
     public void publishPendingEvents() {
+        LOGGER.info("Publicando eventos pendentes");
         repository.findAllUnpublished().forEach(this::tryPublishEvent);
     }
 
     private void tryPublishEvent(OrderEvent event) {
+        LOGGER.info("Publicando evento: id={}, orderId={}, type={}",
+                event.id().value(), event.orderId().value(), event.type());
         try {
             transaction.execute(() -> publishEvent(event));
             logSuccess(event);
@@ -36,13 +39,13 @@ public class PublishPendingOrderEventsService {
     }
 
     private static void logSuccess(OrderEvent event) {
-        LOGGER.info("Evento publicado com sucesso: orderId={}, eventId={}, type={}",
-                event.orderId().value(), event.id().value(), event.type());
+        LOGGER.info("Evento publicado com sucesso: id={}, orderId={}, eventId={}, type={}",
+                event.id().value(), event.orderId().value(), event.id().value(), event.type());
     }
 
     private static void logFailure(OrderEvent event, RuntimeException e) {
-        LOGGER.error("Falha ao publicar o evento: orderId={}, eventId={}, type={}, error={}",
-                event.orderId().value(), event.id().value(), event.type(), e.getMessage(), e);
+        LOGGER.error("Falha ao publicar o evento: id={}, orderId={}, eventId={}, type={}, error={}",
+                event.id().value(), event.orderId().value(), event.id().value(), event.type(), e.getMessage(), e);
     }
 
     private void publishEvent(OrderEvent event) {
