@@ -27,7 +27,7 @@ public class StartOrderPickingService {
             }
             order.startPicking();
             repository.save(order);
-            LOGGER.info("Pedido {} em seperação.", orderId.value());
+            LOGGER.info("Pedido {} em separação.", orderId.value());
         });
     }
 }
