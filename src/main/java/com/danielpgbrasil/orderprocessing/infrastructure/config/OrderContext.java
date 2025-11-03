@@ -1,8 +1,6 @@
 package com.danielpgbrasil.orderprocessing.infrastructure.config;
 
-import com.danielpgbrasil.orderprocessing.application.order.CreateOrderService;
-import com.danielpgbrasil.orderprocessing.application.order.GetOrderService;
-import com.danielpgbrasil.orderprocessing.application.order.GetOrderStatusService;
+import com.danielpgbrasil.orderprocessing.application.order.*;
 import com.danielpgbrasil.orderprocessing.application.shared.AppTransaction;
 import com.danielpgbrasil.orderprocessing.domain.order.OrderListener;
 import com.danielpgbrasil.orderprocessing.domain.order.OrderRepository;
@@ -39,5 +37,20 @@ public class OrderContext {
     @Bean
     public GetOrderStatusService getOrderStatusService() {
         return new GetOrderStatusService(orderRepository);
+    }
+
+    @Bean
+    public StartOrderPickingService startOrderPickingService() {
+        return new StartOrderPickingService(transaction, orderRepository);
+    }
+
+    @Bean
+    public StartOrderTransitService startOrderTransitService() {
+        return new StartOrderTransitService(transaction, orderRepository);
+    }
+
+    @Bean
+    public MarkOrderDeliveredService markOrderDeliveredService() {
+        return new MarkOrderDeliveredService(transaction, orderRepository);
     }
 }
