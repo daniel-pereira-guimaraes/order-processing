@@ -38,13 +38,13 @@ public class RabbitMqConfig {
     }
 
     @Bean
-    public Queue orderQueue() {
-        return QueueBuilder.durable(ORDER_EVENTS_QUEUE).build();
+    public DirectExchange orderExchange() {
+        return new DirectExchange(ORDER_EVENTS_EXCHANGE, true, false);
     }
 
     @Bean
-    public DirectExchange orderExchange() {
-        return new DirectExchange(ORDER_EVENTS_EXCHANGE);
+    public Queue orderQueue() {
+        return QueueBuilder.durable(ORDER_EVENTS_QUEUE).build();
     }
 
     @Bean
