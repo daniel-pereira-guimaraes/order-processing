@@ -2,6 +2,8 @@ package com.danielpgbrasil.orderprocessing.infrastructure.messaging;
 
 import com.danielpgbrasil.orderprocessing.application.order.event.OrderEventPublisher;
 import com.danielpgbrasil.orderprocessing.domain.order.event.OrderEvent;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageDeliveryMode;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +20,16 @@ public class RabbitMqOrderEventPublisher implements OrderEventPublisher {
 
     @Override
     public void publish(OrderEvent event) {
-        rabbitTemplate.convertAndSend(ORDER_EVENTS_EXCHANGE, ORDER_ROUTING_KEY, event);
+        rabbitTemplate.convertAndSend(
+                ORDER_EVENTS_EXCHANGE,
+                ORDER_ROUTING_KEY,
+                event,
+                RabbitMqOrderEventPublisher::makePersistent
+                );
+    }
+
+    private static Message makePersistent(Message msg) {
+        msg.getMessageProperties().setDeliveryMode(MessageDeliveryMode.PERSISTENT);
+        return msg;
     }
 }
