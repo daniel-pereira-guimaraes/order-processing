@@ -22,12 +22,12 @@ public class StartOrderTransitService {
         transaction.execute(() -> {
             var order = repository.getOrThrow(orderId);
             if (order.status() != OrderStatus.PICKING) {
-                LOGGER.info("Ignorando pedido {} com status diferente de PICKING.", orderId.value());
+                LOGGER.info("Ignorando pedido com status diferente de PICKING: orderId={}", orderId.value());
                 return;
             }
             order.startTransit();
             repository.save(order);
-            LOGGER.info("Pedido {} em transporte.", orderId.value());
+            LOGGER.info("Pedido em transporte: orderId={}", orderId.value());
         });
     }
 }

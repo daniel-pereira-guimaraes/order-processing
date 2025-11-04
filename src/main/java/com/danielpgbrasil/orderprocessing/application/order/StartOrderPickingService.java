@@ -22,12 +22,12 @@ public class StartOrderPickingService {
         transaction.execute(() -> {
             var order = repository.getOrThrow(orderId);
             if (order.status() != OrderStatus.CREATED) {
-                LOGGER.info("Ignorando pedido {} com status diferente de CREATED.", orderId.value());
+                LOGGER.info("Ignorando pedido com status diferente de CREATED: orderId={}", orderId.value());
                 return;
             }
             order.startPicking();
             repository.save(order);
-            LOGGER.info("Pedido {} em separação.", orderId.value());
+            LOGGER.info("Pedido em separação: orderId={}", orderId.value());
         });
     }
 }

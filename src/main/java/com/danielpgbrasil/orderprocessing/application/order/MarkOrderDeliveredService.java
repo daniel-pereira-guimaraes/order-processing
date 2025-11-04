@@ -22,12 +22,12 @@ public class MarkOrderDeliveredService {
         transaction.execute(() -> {
             var order = repository.getOrThrow(orderId);
             if (order.status() != OrderStatus.IN_TRANSIT) {
-                LOGGER.info("Ignorando pedido {} com status diferente de IN_TRANSIT.", orderId.value());
+                LOGGER.info("Ignorando pedido com status diferente de IN_TRANSIT: orderId={}", orderId.value());
                 return;
             }
             order.markDelivered();
             repository.save(order);
-            LOGGER.info("Pedido {} entregue.", orderId.value());
+            LOGGER.info("Pedido entregue: orderId={}", orderId.value());
         });
     }
 }
