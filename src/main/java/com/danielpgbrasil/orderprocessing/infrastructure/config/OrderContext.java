@@ -1,5 +1,6 @@
 package com.danielpgbrasil.orderprocessing.infrastructure.config;
 
+import com.danielpgbrasil.orderprocessing.application.metrics.OrderMetrics;
 import com.danielpgbrasil.orderprocessing.application.order.*;
 import com.danielpgbrasil.orderprocessing.application.shared.AppTransaction;
 import com.danielpgbrasil.orderprocessing.domain.order.OrderListener;

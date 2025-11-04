@@ -1,5 +1,6 @@
 package com.danielpgbrasil.orderprocessing.infrastructure.config;
 
+import com.danielpgbrasil.orderprocessing.application.metrics.OrderMetrics;
 import com.danielpgbrasil.orderprocessing.application.order.event.CreateOrderEventService;
 import com.danielpgbrasil.orderprocessing.application.order.event.GetOrderEventsService;
 import com.danielpgbrasil.orderprocessing.application.order.event.OrderEventPublisher;
@@ -30,6 +31,9 @@ public class OrderEventContext {
     @Autowired
     private OrderEventPublisher orderEventPublisher;
 
+    @Autowired
+    private OrderMetrics orderMetrics;
+
     @Bean
     public GetOrderEventsService getOrderEventsService() {
         return new GetOrderEventsService(orderRepository, orderEventRepository);
@@ -42,7 +46,9 @@ public class OrderEventContext {
 
     @Bean
     public PublishPendingOrderEventsService publishPendingOrderEventsService() {
-        return new PublishPendingOrderEventsService(transaction, orderEventRepository, orderEventPublisher);
+        return new PublishPendingOrderEventsService(transaction,
+                orderEventRepository, orderEventPublisher, orderMetrics
+        );
     }
 
 }

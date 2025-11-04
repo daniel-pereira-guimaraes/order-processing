@@ -1,5 +1,6 @@
 package com.danielpgbrasil.orderprocessing.infrastructure.messaging;
 
+import com.danielpgbrasil.orderprocessing.application.metrics.OrderMetrics;
 import com.danielpgbrasil.orderprocessing.application.order.MarkOrderDeliveredService;
 import com.danielpgbrasil.orderprocessing.application.order.StartOrderPickingService;
 import com.danielpgbrasil.orderprocessing.application.order.StartOrderTransitService;
@@ -17,14 +18,17 @@ public class RabbitMqOrderEventConsumer {
     private final StartOrderPickingService pickingService;
     private final StartOrderTransitService transitService;
     private final MarkOrderDeliveredService deliveryService;
+    private final OrderMetrics orderMetrics;
 
     public RabbitMqOrderEventConsumer(
             StartOrderPickingService pickingService,
             StartOrderTransitService transitService,
-            MarkOrderDeliveredService deliveryService) {
+            MarkOrderDeliveredService deliveryService,
+            OrderMetrics orderMetrics) {
         this.pickingService = pickingService;
         this.transitService = transitService;
         this.deliveryService = deliveryService;
+        this.orderMetrics = orderMetrics;
     }
 
     @RabbitListener(queues = RabbitMqConfig.ORDER_EVENTS_QUEUE)
@@ -37,6 +41,7 @@ public class RabbitMqOrderEventConsumer {
         } catch (RuntimeException e) { //NOSONAR
             LOGGER.error("Erro consumindo evento: id={}, orderId={}, type={}",
                     event.id().value(), event.orderId().value(), event.type(), e);
+            orderMetrics.incrementFailedEvents();
             throw e;
         }
     }
