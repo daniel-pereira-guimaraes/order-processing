@@ -1,5 +1,6 @@
 package com.danielpgbrasil.orderprocessing.it.infrastructure;
 
+import com.danielpgbrasil.orderprocessing.application.order.event.OrderEventPublisher;
 import com.danielpgbrasil.orderprocessing.domain.shared.AppClock;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -13,6 +14,11 @@ class MocksConfig {
     @Bean
     public AppClock clock() {
         return mock(AppClock.class);
+    }
+
+    @Bean
+    public OrderEventPublisher orderEventPublisher() {
+        return mock(OrderEventPublisher.class);
     }
 
     @Bean
