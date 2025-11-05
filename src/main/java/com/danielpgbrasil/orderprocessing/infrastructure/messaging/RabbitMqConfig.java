@@ -11,6 +11,7 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class RabbitMqConfig {
@@ -26,7 +27,7 @@ public class RabbitMqConfig {
 
     private final DynamicMessageRecovererFactory dynamicMessageRecovererFactory;
 
-    public RabbitMqConfig(DynamicMessageRecovererFactory dynamicMessageRecovererFactory) {
+    public RabbitMqConfig(@Lazy DynamicMessageRecovererFactory dynamicMessageRecovererFactory) {
         this.dynamicMessageRecovererFactory = dynamicMessageRecovererFactory;
     }
 
