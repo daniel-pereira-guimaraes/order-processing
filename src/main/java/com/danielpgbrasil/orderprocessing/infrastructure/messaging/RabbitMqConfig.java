@@ -28,10 +28,10 @@ public class RabbitMqConfig {
     public static final String ORDER_EVENTS_QUEUE = ORDER_ROUTING_KEY + QUEUE_SUFFIX;
     public static final String ORDER_EVENTS_EXCHANGE = ORDER_ROUTING_KEY + EXCHANGE_SUFFIX;
 
-    private final FailedMessageEnricher failedMessageEnricher;
+    private final DynamicMessageRecovererFactory dynamicMessageRecovererFactory;
 
-    public RabbitMqConfig(FailedMessageEnricher failedMessageEnricher) {
-        this.failedMessageEnricher = failedMessageEnricher;
+    public RabbitMqConfig(DynamicMessageRecovererFactory dynamicMessageRecovererFactory) {
+        this.dynamicMessageRecovererFactory = dynamicMessageRecovererFactory;
     }
 
     @Bean
@@ -75,14 +75,7 @@ public class RabbitMqConfig {
 
     @Bean
     public MessageRecoverer dynamicMessageRecoverer(RabbitTemplate rabbitTemplate) {
-        return (message, cause) -> {
-            var originalQueue = message.getMessageProperties().getConsumerQueue();
-            var errorRoutingKey = originalQueue + ERROR_SUFFIX;
-            var exchange = originalQueue.replaceFirst(QUEUE_SUFFIX_REGEX, EXCHANGE_SUFFIX);
-            var messageCopy = failedMessageEnricher.enrich(message, cause);
-            rabbitTemplate.convertAndSend(exchange, errorRoutingKey, messageCopy);
-            LOGGER.error("Mensagem movida para fila de erro: {}", errorRoutingKey);
-        };
+        return dynamicMessageRecovererFactory.create(ERROR_SUFFIX, QUEUE_SUFFIX_REGEX, EXCHANGE_SUFFIX);
     }
 
 }
