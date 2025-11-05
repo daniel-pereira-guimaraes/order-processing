@@ -27,7 +27,7 @@ services:
 
   order-processing:
     build:
-      context: ./order-processing
+      context: .
     image: order-processing:latest
     container_name: order-processing-container
     depends_on:
