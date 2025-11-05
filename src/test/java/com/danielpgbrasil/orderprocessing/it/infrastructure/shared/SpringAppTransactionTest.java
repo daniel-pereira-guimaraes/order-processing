@@ -30,10 +30,14 @@ class SpringAppTransactionTest extends IntegrationTestBase {
                 .withOrderId(OrderId.of(1L))
                 .build();
 
-        appTransaction.execute(() -> repository.save(event));
+        appTransaction.execute(() -> {
+            repository.save(event);
+            assertThat(appTransaction.inTransaction(), is(true));
+        });
 
         assertThat(event.id(), notNullValue());
         assertThat(repository.get(event.id()).orElseThrow(), is(event));
+        assertThat(appTransaction.inTransaction(), is(false));
     }
 
     @Test
