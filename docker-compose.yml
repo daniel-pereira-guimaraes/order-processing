@@ -1,0 +1,54 @@
+version: "3.9"
+
+services:
+  mysql8:
+    image: mysql:8
+    container_name: mysql8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - order-processing-network
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - order-processing-network
+
+  order-processing:
+    build:
+      context: ./order-processing
+    image: order-processing:latest
+    container_name: order-processing-container
+    depends_on:
+      - mysql8
+      - rabbitmq
+    environment:
+      MYSQL_HOST: mysql8
+      MYSQL_PORT: 3306
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASS: guest
+    ports:
+      - "8080:8080"
+    networks:
+      - order-processing-network
+
+volumes:
+  mysql-data:
+
+networks:
+  order-processing-network:
