@@ -8,12 +8,16 @@ import com.danielpgbrasil.orderprocessing.infrastructure.shared.OrderEventDeseri
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OrderEventDeserializerTest {
 
@@ -70,6 +74,25 @@ class OrderEventDeserializerTest {
         var outputEvent = objectMapper.readValue(json, OrderEvent.class);
 
         assertEquals(inputEvent, outputEvent);
+    }
+
+    @Test
+    void deserializingJsonWithAllNullFieldsThrowsException() {
+        var json = """
+        {
+          "id": null,
+          "orderId": null,
+          "type": null,
+          "createdAt": null,
+          "published": null
+        }
+        """;
+
+        var exception = assertThrows(Exception.class, () ->
+                objectMapper.readValue(json, OrderEvent.class)
+        );
+
+        assertThat(exception, instanceOf(IllegalArgumentException.class));
     }
 
     private String buildJson(OrderEvent event) {
