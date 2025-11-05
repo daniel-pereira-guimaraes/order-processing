@@ -1,5 +1,6 @@
 package com.danielpgbrasil.orderprocessing.ut.application.order.event;
 
+import com.danielpgbrasil.orderprocessing.application.metrics.OrderMetrics;
 import com.danielpgbrasil.orderprocessing.application.order.event.OrderEventPublisher;
 import com.danielpgbrasil.orderprocessing.application.order.event.PublishPendingOrderEventsService;
 import com.danielpgbrasil.orderprocessing.application.shared.AppTransaction;
@@ -25,6 +26,7 @@ class PublishPendingOrderEventsServiceTest {
     private AppTransaction transaction;
     private OrderEventRepository repository;
     private OrderEventPublisher publisher;
+    private OrderMetrics orderMetrics;
     private PublishPendingOrderEventsService service;
 
     @BeforeEach
@@ -35,7 +37,8 @@ class PublishPendingOrderEventsServiceTest {
         transaction = mockedTransaction();
         repository = mock(OrderEventRepository.class);
         publisher = mock(OrderEventPublisher.class);
-        service = new PublishPendingOrderEventsService(transaction, repository, publisher);
+        orderMetrics = mock(OrderMetrics.class);
+        service = new PublishPendingOrderEventsService(transaction, repository, publisher, orderMetrics);
 
         assertThatInTransaction(transaction).when(repository).save(any());
         assertThatInTransaction(transaction).when(publisher).publish(any());
@@ -47,10 +50,11 @@ class PublishPendingOrderEventsServiceTest {
     void publishesAllPendingEventsSuccessfully() {
         service.publishPendingEvents();
 
-        var inOrder = inOrder(transaction, event1, event2, repository, publisher);
+        var inOrder = inOrder(transaction, event1, event2, repository, publisher, orderMetrics);
 
         inOrder.verify(repository).findAllUnpublished();
 
+        inOrder.verify(orderMetrics).pendingEvents(2);
         inOrder.verify(transaction).execute(any());
         inOrder.verify(event1).markAsPublished();
         inOrder.verify(repository).save(event1);
@@ -71,10 +75,11 @@ class PublishPendingOrderEventsServiceTest {
 
         service.publishPendingEvents();
 
-        var inOrder = inOrder(transaction, event1, event2, repository, publisher);
+        var inOrder = inOrder(transaction, event1, event2, repository, publisher, orderMetrics);
 
         inOrder.verify(repository).findAllUnpublished();
 
+        inOrder.verify(orderMetrics).pendingEvents(2);
         inOrder.verify(transaction).execute(any());
         inOrder.verify(event1).markAsPublished();
         inOrder.verify(repository).save(event1);
@@ -95,10 +100,11 @@ class PublishPendingOrderEventsServiceTest {
 
         service.publishPendingEvents();
 
-        var inOrder = inOrder(transaction, event1, event2, repository, publisher);
+        var inOrder = inOrder(transaction, event1, event2, repository, publisher, orderMetrics);
 
         inOrder.verify(repository).findAllUnpublished();
 
+        inOrder.verify(orderMetrics).pendingEvents(2);
         inOrder.verify(transaction).execute(any());
         inOrder.verify(event1).markAsPublished();
         inOrder.verify(repository, never()).save(event1);
@@ -119,10 +125,11 @@ class PublishPendingOrderEventsServiceTest {
 
         service.publishPendingEvents();
 
-        var inOrder = inOrder(event1, event2, transaction, repository, publisher);
+        var inOrder = inOrder(event1, event2, transaction, repository, publisher, orderMetrics);
 
         inOrder.verify(repository).findAllUnpublished();
 
+        inOrder.verify(orderMetrics).pendingEvents(2);
         inOrder.verify(transaction).execute(any());
         inOrder.verify(event1).markAsPublished();
         inOrder.verify(repository).save(event1);
@@ -138,11 +145,12 @@ class PublishPendingOrderEventsServiceTest {
     }
 
     @Test
-    void doesNothingWhenNoPendingEventsFound() {
+    void updatesMetricOnlyWhenNoPendingEventsFound() {
         when(repository.findAllUnpublished()).thenReturn(List.of());
 
         service.publishPendingEvents();
 
+        verify(orderMetrics).pendingEvents(0);
         verify(repository).findAllUnpublished();
         verify(transaction, never()).execute(any());
         verifyNoMoreInteractions(repository, publisher);
