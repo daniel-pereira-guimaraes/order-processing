@@ -1,8 +1,6 @@
 package com.danielpgbrasil.orderprocessing.infrastructure.messaging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -16,8 +14,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitMqConfig {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RabbitMqConfig.class);
 
     private static final String ERROR_SUFFIX = ".error";
     private static final String EXCHANGE_SUFFIX = "-exchange";
