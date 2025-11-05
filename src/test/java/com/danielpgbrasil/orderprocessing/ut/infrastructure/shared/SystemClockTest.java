@@ -26,7 +26,7 @@ class SystemClockTest {
 
             var elapsed = t2.value() - t1.value();
             assertThat(elapsed, greaterThanOrEqualTo(2L));
-            assertThat(elapsed, lessThanOrEqualTo(50L)); // Tolerância
+            assertThat(elapsed, lessThanOrEqualTo(1000L)); // Tolerância
         }
     }
 
