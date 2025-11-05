@@ -1,6 +1,5 @@
 package com.danielpgbrasil.orderprocessing.infrastructure.messaging;
 
-import com.danielpgbrasil.orderprocessing.infrastructure.shared.ExceptionDetailsExtractor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +10,9 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.rabbit.retry.MessageRecoverer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.time.Instant;
 
 @Configuration
 public class RabbitMqConfig {
@@ -32,11 +28,11 @@ public class RabbitMqConfig {
     public static final String ORDER_EVENTS_QUEUE = ORDER_ROUTING_KEY + QUEUE_SUFFIX;
     public static final String ORDER_EVENTS_EXCHANGE = ORDER_ROUTING_KEY + EXCHANGE_SUFFIX;
 
-    @Autowired
-    private ExceptionDetailsExtractor exceptionDetailsExtractor;
+    private final FailedMessageEnricher failedMessageEnricher;
 
-    @Autowired
-    private FailedMessageEnricher failedMessageEnricher;
+    public RabbitMqConfig(FailedMessageEnricher failedMessageEnricher) {
+        this.failedMessageEnricher = failedMessageEnricher;
+    }
 
     @Bean
     public MessageConverter jsonMessageConverter(ObjectMapper objectMapper) {
