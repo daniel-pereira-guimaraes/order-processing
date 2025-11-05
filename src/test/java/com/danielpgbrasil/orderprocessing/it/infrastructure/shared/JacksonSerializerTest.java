@@ -94,6 +94,17 @@ class JacksonSerializerTest {
         assertThat(exception.getCause(), is(notNullValue()));
     }
 
+    @Test
+    void deserializeThrowsUncheckedSerializationExceptionWhenJsonIsInvalid() {
+        var invalidJson = "{ this is not valid json }";
+
+        var exception = assertThrows(UncheckedSerializationException.class,
+                () -> serializer.deserialize(invalidJson, Object.class)
+        );
+
+        assertThat(exception.getCause(), notNullValue());
+    }
+
     public static class CircularReferenceStub {
         @SuppressWarnings("unused")
         private final Object self = this;
