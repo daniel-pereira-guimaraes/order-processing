@@ -23,7 +23,7 @@ public class ExceptionDetailsExtractor {
     }
 
     private Throwable findRootCause(Throwable cause) {
-        while (cause.getCause() != null && cause.getCause() != cause) {
+        while (cause.getCause() != null) {
             cause = cause.getCause();
         }
         return cause;
