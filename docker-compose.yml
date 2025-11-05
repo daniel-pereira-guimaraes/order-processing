@@ -12,6 +12,12 @@ services:
       - mysql-data:/var/lib/mysql
     networks:
       - order-processing-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -24,6 +30,12 @@ services:
       - "15672:15672"
     networks:
       - order-processing-network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
 
   order-processing:
     build:
@@ -31,8 +43,10 @@ services:
     image: order-processing:latest
     container_name: order-processing-container
     depends_on:
-      - mysql8
-      - rabbitmq
+      mysql8:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       MYSQL_HOST: mysql8
       MYSQL_PORT: 3306
