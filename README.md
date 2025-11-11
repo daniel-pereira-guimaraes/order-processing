@@ -14,6 +14,8 @@ simulando recepção, separação, transporte e entrega de pedidos.
 - MockMvc
 - JaCoCo
 - Micrometer
+- Liquibase
+- H2Database (para testes)
 - MySQL 8
 - RabbitMQ 3.13.7
 
@@ -26,7 +28,7 @@ simulando recepção, separação, transporte e entrega de pedidos.
 - Clean Code
 
 
-## 🛡️ Consistência, Resiliência e Performance
+## 🛡️ Consistência, resiliência e performance
 
 O fluxo de processamento é dividido em duas etapas:
 
@@ -50,7 +52,7 @@ seguindo o padrão **Transactional Outbox**.
 > retries com delay devem recolocar o evento na fila, o que pode corrigir a ordem naturalmente.
 > Se todas as tentativas falharem, o evento pode ser reprocessado a partir da fila de erro (DLQ).
 
-### Baixa Latência
+### Baixa latência
 
 - API retorna imediatamente após commit transacional, delegando processamento pesado ao fluxo assíncrono.  
 - Publicação imediata de eventos garante disponibilidade quase instantânea na fila.  
@@ -61,16 +63,18 @@ Essa abordagem integra **persistência confiável, consistência, resiliência e
 servindo como referência didática para sistemas backend modernos.
 
 
-## 🧩 Componentes-chave:
+## 🧩 Componentes principais
 
-- **Order / OrderEvent**: entidades de domínio (pedidos e seus eventos).
-- **OrderRepository / JdbcOrderRepository**: interface e implementação do repositório de pedidos.
-- **OrderEventRepository / JdbcOrderEventRepository**: interface e implementação do repositório de eventos (fila de saída).
-- **PublishPendingOrderEventsService**: orquestra a publicação dos eventos pendentes.
-- **AsyncPublishPendingOrderEventsService**: executa a publicação dos eventos em background, minimizando a latência.
-- **PublishPendingOrderEventsScheduler**: agenda a publicação periódica de eventos pendentes.
-- **OrderEventPublisher / RabbitMqOrderEventPublisher**: interface e implementação do publicador de eventos do pedido.
-- **RabbitMqOrderEventConsumer**: consumidor de eventos do pedido.
+| Componente | Descrição |
+|------------|-----------|
+| Order / OrderEvent | Entidades de domínio (pedidos e seus eventos). |
+| OrderRepository / JdbcOrderRepository | Interface e implementação do repositório de pedidos. |
+| OrderEventRepository / JdbcOrderEventRepository | Interface e implementação do repositório de eventos. |
+| PublishPendingOrderEventsService | Orquestra a publicação dos eventos pendentes. |
+| AsyncPublishPendingOrderEventsService | Executa a publicação dos eventos em background. |
+| PublishPendingOrderEventsScheduler | Agenda a publicação periódica de eventos pendentes. |
+| OrderEventPublisher / RabbitMqOrderEventPublisher | Interface e implementação do publicador de eventos do pedido. |
+| RabbitMqOrderEventConsumer | Consumidor de eventos do pedido. |
 
 
 ## 🔗 Endpoints da API
@@ -85,6 +89,14 @@ A documentação completa no formato OpenAPI (Swagger) é disponibilizada no
 | GET    | /orders/{id}        | Consulta os dados de um pedido.                        |
 | GET    | /orders/{id}/status | Consulta o status atual de um pedido.                  |
 | GET    | /orders/{id}/events | Consulta o histórico completo de eventos de um pedido. |
+
+
+## 💾 Banco de dados
+
+A estrutura do banco de dados foi simplificada, visto que o foco do projeto é a
+arquitetura orientada a eventos. As seguintes tabelas foram criadas:
++ **tb_order**: dados do pedido, com alguns dados persistidos como JSON.
++ **tb_order_event**: dados dos eventos dos pedidos.
 
 
 ## ➡️ Filas no RabbitMQ
