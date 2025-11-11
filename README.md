@@ -14,6 +14,8 @@ simulando recepção, separação, transporte e entrega de pedidos.
 - MockMvc
 - JaCoCo
 - Micrometer
+- Swagger
+- JDBC
 - Liquibase
 - H2Database (para testes)
 - MySQL 8
